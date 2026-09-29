@@ -430,7 +430,7 @@
   // ---------- Publicar ----------
   $("#publishBtn").onclick = async () => {
     if (cfg.local) return;
-    if (!dirty()) return toast("No hay cambios para publicar.");
+    if (!dirty()) return notice("✓ Todo está publicado", "No hay cambios nuevos. Para publicar algo, primero agrega o edita un producto (o cambia algo en Ajustes) y luego presiona Publicar.");
     const bad = data.productos.find(p => !p.nombre || !(p.precio > 0));
     if (bad) return toast("Hay un producto sin nombre o sin precio. Revísalo antes de publicar.");
     try {
@@ -463,7 +463,7 @@
         published = JSON.stringify(data);
         ls.del("jc_admin_draft");
         renderProducts(); changed(); busy(false);
-        return toast("¡Publicado! La tienda se actualiza en 1–2 minutos ✦");
+        return published_ok();
       }
       for (let k = 0; k < pend.length; k++) {
         const { p, set, src } = pend[k];
@@ -489,7 +489,7 @@
       ls.del("jc_admin_draft");
       renderProducts(); changed();
       busy(false);
-      toast("¡Publicado! La tienda se actualiza en 1–2 minutos ✦");
+      published_ok();
     } catch (err) {
       console.error(err); busy(false);
       if (err.pc || (cfg && cfg.pc)) {
@@ -505,6 +505,18 @@
       renderProducts(); changed();
     }
   };
+
+  // ---------- Avisos grandes ----------
+  function notice(title, text, withStore){
+    $("#noticeTitle").textContent = title;
+    $("#noticeText").textContent = text;
+    $("#noticeStore").hidden = !withStore;
+    $("#notice").hidden = false;
+  }
+  function published_ok(){
+    notice("¡Publicado! ✦", "Tus cambios ya se guardaron. La tienda se actualiza sola en 1 o 2 minutos; si no los ves, recarga la página de la tienda.", true);
+  }
+  $("#noticeOk").onclick = () => { $("#notice").hidden = true; };
 
   // ---------- Utilidades ----------
   function busy(msg){ $("#progress").hidden = !msg; if (msg) $("#progressText").textContent = msg; }

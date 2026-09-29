@@ -9,7 +9,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/tienda.css?v=9">
+<link rel="stylesheet" href="css/tienda.css?v=10">
 <style>
   body{background:var(--bg);min-height:100vh}
   .a-top{position:sticky;top:0;z-index:40;background:rgba(8,7,6,.96);border-bottom:1px solid var(--line);backdrop-filter:blur(8px)}
@@ -86,6 +86,7 @@
   }
   .top-actions{display:contents}
   .a-bottom{display:none}
+  .notice-box{max-width:420px;margin:0 16px;text-align:center}
   .pc-box{display:grid;gap:8px;text-align:center;border:1px solid var(--gold);border-radius:14px;padding:16px;background:rgba(212,175,55,.08)}
   .pc-box span{font-size:.82rem;color:var(--soft)}
   .pc-box~#loginForm,.pc-box~.help{display:none}
@@ -324,8 +325,16 @@
 </div>
 
 <div class="toast" id="toast"></div>
+<div class="progress" id="notice" hidden><div class="card-box notice-box">
+  <h3 class="gold-text" id="noticeTitle" style="font-family:Cinzel,serif;font-size:1.5rem"></h3>
+  <p id="noticeText" style="color:var(--soft);margin:10px 0 18px"></p>
+  <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
+    <a class="btn btn-outline" id="noticeStore" href="https://wanna033.github.io/jc-perfumeria/" target="_blank" rel="noopener">Ver mi tienda</a>
+    <button class="btn btn-gold" id="noticeOk">Aceptar</button>
+  </div>
+</div></div>
 <div class="progress" id="progress" hidden><div class="card-box"><div class="spinner"></div><div id="progressText">Publicando…</div></div></div>
 
-<script src="js/admin.js?v=9"></script>
+<script src="js/admin.js?v=10"></script>
 </body>
 </html>
