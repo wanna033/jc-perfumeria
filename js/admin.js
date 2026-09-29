@@ -105,9 +105,10 @@
     d = d || {};
     return {
       ajustes: { nombre:"", whatsapp:"", telefonoVisible:"", email:"", anuncio:"", heroEtiqueta:"", heroTitulo:"", heroTexto:"", nosotros:"", envioGratisDesde:0, formasPago:[], instagram:"", facebook:"", tiktok:"", ...(d.ajustes || {}) },
-      productos: (d.productos || []).map(p => ({ id:"", nombre:"", marca:"", presentacion:"", precio:0, precioAnterior:0, imagen:"", perfil:[], descripcion:"", notas:[], agotado:false, nuevo:false, destacado:false, ...p })),
+      productos: (d.productos || []).map(p => ({ id:"", nombre:"", marca:"", genero:"", imagenes:[], presentacion:"", precio:0, precioAnterior:0, imagen:"", perfil:[], descripcion:"", notas:[], agotado:false, nuevo:false, destacado:false, ...p })),
       testimonios: d.testimonios || [],
-      preguntas: d.preguntas || []
+      preguntas: d.preguntas || [],
+      cupones: d.cupones || []
     };
   }
 
@@ -130,7 +131,7 @@
     $$("[data-panel]").forEach(p => p.hidden = p.dataset.panel !== t.dataset.tab);
   };
 
-  function renderAll(){ renderProducts(); renderSettings(); renderTes(); renderFaq(); changed(); }
+  function renderAll(){ renderProducts(); renderSettings(); renderTes(); renderFaq(); renderCup(); changed(); }
 
   // ---------- Productos ----------
   function renderProducts(){
@@ -141,7 +142,7 @@
     const rows = P.map((p, i) => ({ p, i })).filter(({ p }) => !q || (p.nombre + " " + p.marca).toLowerCase().includes(q));
     $("#plist").innerHTML = rows.length ? rows.map(({ p, i }) => `
       <div class="prow">
-        <img src="${esc(p.imagen || "assets/logo.png")}" alt="" data-act="edit" data-i="${i}" style="cursor:pointer" onerror="this.onerror=null;this.src='assets/logo.png'">
+        <img src="${esc(p.imagen || "assets/logo-600.jpg")}" alt="" data-act="edit" data-i="${i}" style="cursor:pointer" onerror="this.onerror=null;this.src='assets/logo-600.jpg'">
         <div>
           <h3 data-act="edit" data-i="${i}" style="cursor:pointer">${esc(p.nombre)}</h3>
           <div class="sub">${esc(p.marca || "Sin marca")} · <span class="pr">${money(p.precio)}</span>${+p.precioAnterior > +p.precio ? ` <s>${money(p.precioAnterior)}</s>` : ""}</div>
@@ -149,7 +150,9 @@
             ${p.agotado ? `<span class="pill red">Agotado</span>` : ""}
             ${p.destacado ? `<span class="pill gold">★ Destacado</span>` : ""}
             ${p.nuevo ? `<span class="pill gold">Nuevo</span>` : ""}
-            ${String(p.imagen).startsWith("data:") ? `<span class="pill warn">Foto nueva sin publicar</span>` : ""}
+            ${p.genero ? `<span class="pill">${esc(p.genero)}</span>` : ""}
+            ${(p.imagenes || []).length ? `<span class="pill">+${p.imagenes.length} fotos</span>` : ""}
+            ${[p.imagen, ...(p.imagenes || [])].some(x => String(x).startsWith("data:")) ? `<span class="pill warn">Fotos nuevas sin publicar</span>` : ""}
           </div>
         </div>
         <div class="ractions">
@@ -184,20 +187,21 @@
 
   // ---------- Editor ----------
   const form = $("#productForm");
-  let editing = -1, pendingImg = null;
+  let editing = -1, pendingImg = null, extras = [];
   function openEditor(i){
     editing = i; pendingImg = null;
-    const p = i >= 0 ? data.productos[i] : { nombre:"", marca:"", presentacion:"", precio:"", precioAnterior:"", imagen:"", perfil:[], notas:[], descripcion:"", agotado:false, nuevo:true, destacado:false };
+    const p = i >= 0 ? data.productos[i] : { nombre:"", marca:"", genero:"", imagenes:[], presentacion:"", precio:"", precioAnterior:"", imagen:"", perfil:[], notas:[], descripcion:"", agotado:false, nuevo:true, destacado:false };
     $("#editTitle").textContent = i >= 0 ? "Editar producto" : "Nuevo producto";
     form.reset();
-    for (const k of ["nombre", "marca", "presentacion", "descripcion"]) form.elements[k].value = p[k] || "";
+    for (const k of ["nombre", "marca", "genero", "presentacion", "descripcion"]) form.elements[k].value = p[k] || "";
+    extras = [...(p.imagenes || [])]; renderExtras();
     form.elements.precio.value = p.precio || "";
     form.elements.precioAnterior.value = +p.precioAnterior || "";
     form.elements.perfil.value = (p.perfil || []).join(", ");
     form.elements.notas.value = (p.notas || []).join(", ");
     form.elements.imagenUrl.value = /^https?:/.test(p.imagen) ? p.imagen : "";
     for (const k of ["agotado", "nuevo", "destacado"]) form.elements[k].checked = !!p[k];
-    $("#imgPreview").src = p.imagen || "assets/logo.png";
+    $("#imgPreview").src = p.imagen || "assets/logo-600.jpg";
     $("#imgPreview").dataset.src = p.imagen || "";
     $("#editErr").textContent = "";
     $("#editModal").classList.add("show"); $("#overlay").classList.add("show");
@@ -235,6 +239,31 @@
     } catch { toast("No se pudo leer la imagen."); }
   }
   $("#imgFile").onchange = e => takeFile(e.target.files[0]);
+
+  // Fotos adicionales
+  function renderExtras(){
+    $("#extraGrid").innerHTML = extras.map((src, k) => `
+      <div class="xph"><img src="${esc(src)}" alt="" onerror="this.onerror=null;this.src='assets/logo-600.jpg'">
+        <button type="button" data-xdel="${k}" title="Quitar">✕</button>
+        <button type="button" class="main-btn" data-xmain="${k}" title="Usar como foto principal">Principal</button>
+      </div>`).join("");
+  }
+  $("#extraGrid").onclick = e => {
+    const d = e.target.closest("[data-xdel]"), m = e.target.closest("[data-xmain]");
+    if (d) { extras.splice(+d.dataset.xdel, 1); renderExtras(); }
+    if (m) {
+      const k = +m.dataset.xmain, cur = $("#imgPreview").dataset.src;
+      $("#imgPreview").src = $("#imgPreview").dataset.src = extras[k];
+      if (cur) extras[k] = cur; else extras.splice(k, 1);
+      form.elements.imagenUrl.value = /^https?:/.test($("#imgPreview").dataset.src) ? $("#imgPreview").dataset.src : "";
+      renderExtras();
+    }
+  };
+  $("#extraFiles").onchange = async e => {
+    const files = [...e.target.files].filter(x => x.type.startsWith("image/")).slice(0, 8);
+    for (const file of files) { try { extras.push(await optimize(file)); } catch { toast("No se pudo leer una de las fotos."); } }
+    renderExtras(); e.target.value = "";
+  };
   const drop = $("#imgDrop");
   drop.ondragover = e => { e.preventDefault(); drop.classList.add("over"); };
   drop.ondragleave = () => drop.classList.remove("over");
@@ -251,12 +280,14 @@
     const nombre = f.nombre.value.trim();
     const p = {
       id: old?.id || uniqueId(slug(nombre)),
-      nombre, marca: f.marca.value.trim(), presentacion: f.presentacion.value.trim(),
+      nombre, marca: f.marca.value.trim(), genero: f.genero.value, presentacion: f.presentacion.value.trim(),
       precio, precioAnterior: antes,
       imagen: $("#imgPreview").dataset.src || "",
+      imagenes: extras.filter(Boolean),
       perfil: list(f.perfil.value), descripcion: f.descripcion.value.trim(), notas: list(f.notas.value),
       agotado: f.agotado.checked, nuevo: f.nuevo.checked, destacado: f.destacado.checked
     };
+    if (!p.imagen && p.imagenes.length) p.imagen = p.imagenes.shift();
     if (old) data.productos[editing] = p; else data.productos.unshift(p);
     closeEditor(); renderProducts(); changed();
     toast(old ? "Producto actualizado. Recuerda publicar." : "Producto creado. Recuerda publicar.");
@@ -318,6 +349,44 @@
   $("#addTes").onclick = () => { data.testimonios.push({ nombre:"", ciudad:"", estrellas:5, texto:"" }); renderTes(); changed(); };
   $("#addFaq").onclick = () => { data.preguntas.push({ pregunta:"", respuesta:"" }); renderFaq(); changed(); };
 
+  // ---------- Cupones ----------
+  function renderCup(){
+    $("#cupList").innerHTML = data.cupones.length ? data.cupones.map((c, i) => `
+      <div class="rowbox a-form" data-i="${i}">
+        <button class="ib danger" data-del title="Eliminar">🗑</button>
+        <div class="grid3" style="padding-right:44px">
+          <label>Código<input data-k="codigo" value="${esc(c.codigo)}" placeholder="BIENVENIDA10" style="text-transform:uppercase"></label>
+          <label>Tipo
+            <select data-k="tipo">
+              <option value="porcentaje" ${c.tipo !== "valor" ? "selected" : ""}>Porcentaje (%)</option>
+              <option value="valor" ${c.tipo === "valor" ? "selected" : ""}>Valor fijo ($)</option>
+            </select>
+          </label>
+          <label>Descuento<input data-k="valor" type="number" min="0" value="${esc(c.valor)}"></label>
+        </div>
+        <div class="grid2">
+          <label>Compra mínima ($, 0 = sin mínimo)<input data-k="minimo" type="number" min="0" step="1000" value="${esc(c.minimo || 0)}"></label>
+          <label class="switch"><input type="checkbox" data-k="activo" ${c.activo !== false ? "checked" : ""}> Activo</label>
+        </div>
+      </div>`).join("") : `<div class="card-box" style="text-align:center;color:var(--muted)">Aún no hay cupones. Crea uno, por ejemplo <b>BIENVENIDA10</b> con 10% de descuento.</div>`;
+  }
+  $("#cupList").onchange = $("#cupList").oninput = e => {
+    const box = e.target.closest("[data-i]"), k = e.target.dataset.k; if (!box || !k) return;
+    const c = data.cupones[+box.dataset.i];
+    c[k] = k === "activo" ? e.target.checked
+      : k === "codigo" ? e.target.value.toUpperCase().replace(/\s+/g, "")
+      : (k === "valor" || k === "minimo") ? Math.max(0, +e.target.value || 0)
+      : e.target.value;
+    if (c.tipo === "porcentaje" && c.valor > 100) c.valor = 100;
+    changed();
+  };
+  $("#cupList").onclick = e => {
+    if (!e.target.closest("[data-del]")) return;
+    if (!confirm("¿Eliminar este cupón?")) return;
+    data.cupones.splice(+e.target.closest("[data-i]").dataset.i, 1); renderCup(); changed();
+  };
+  $("#addCup").onclick = () => { data.cupones.push({ codigo:"", tipo:"porcentaje", valor:10, minimo:0, activo:true }); renderCup(); changed(); };
+
   // ---------- Respaldo ----------
   $("#exportBtn").onclick = () => {
     const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
@@ -348,15 +417,22 @@
     const bad = data.productos.find(p => !p.nombre || !(p.precio > 0));
     if (bad) return toast("Hay un producto sin nombre o sin precio. Revísalo antes de publicar.");
     try {
-      const pend = data.productos.filter(p => String(p.imagen).startsWith("data:"));
+      const badCup = data.cupones.find(c => !c.codigo || !(+c.valor > 0));
+      if (badCup) return toast("Hay un cupón sin código o sin descuento. Revísalo en la pestaña Cupones.");
+      const isData = x => String(x).startsWith("data:");
+      const pend = [];
+      data.productos.forEach(p => {
+        if (isData(p.imagen)) pend.push({ p, set: v => { p.imagen = v; }, src: p.imagen });
+        (p.imagenes || []).forEach((x, j) => { if (isData(x)) pend.push({ p, set: v => { p.imagenes[j] = v; }, src: x }); });
+      });
       for (let k = 0; k < pend.length; k++) {
-        const p = pend[k];
+        const { p, set, src } = pend[k];
         busy(`Subiendo fotos (${k + 1} de ${pend.length})…`);
-        const [meta, b64] = p.imagen.split(",");
+        const [meta, b64] = src.split(",");
         const ext = meta.includes("webp") ? "webp" : meta.includes("png") ? "png" : "jpg";
-        const path = `${IMG_DIR}/${p.id}-${Date.now().toString(36)}.${ext}`;
+        const path = `${IMG_DIR}/${p.id}-${Date.now().toString(36)}${k}.${ext}`;
         await putFile(path, b64, `Foto de ${p.nombre}`);
-        p.imagen = path;
+        set(path);
         ls.set("jc_admin_draft", data);
       }
       busy("Guardando productos…");
@@ -376,9 +452,12 @@
       toast("¡Publicado! La tienda se actualiza en 1–2 minutos ✦");
     } catch (err) {
       console.error(err); busy(false);
-      alert(err.status === 401 || err.status === 403
-        ? "GitHub rechazó la clave. Revisa que el token tenga permiso Contents: Read and write sobre este repositorio."
-        : "No se pudo publicar: " + err.message + "\nTus cambios siguen guardados en este equipo; inténtalo de nuevo.");
+      const ghMsg = err.message ? `\n\n(Mensaje de GitHub: ${err.status || ""} ${err.message})` : "";
+      alert((err.status === 401
+        ? "La clave (token) no es válida o ya venció. Presiona Salir (arriba a la derecha) y vuelve a entrar con tu clave nueva."
+        : err.status === 403 || err.status === 404
+        ? "Tu clave puede VER la tienda pero NO tiene permiso para GUARDAR cambios.\n\nArréglalo en GitHub → Settings → Developer settings → Fine-grained tokens → abre tu token → Edit:\n• Repository access: Only select repositories → jc-perfumeria\n• Permissions → Contents: Read and write\n\nPresiona Update y vuelve a presionar Publicar. Tus cambios siguen guardados aquí."
+        : "No se pudo publicar. Tus cambios siguen guardados en este equipo; inténtalo de nuevo.") + ghMsg);
       renderProducts(); changed();
     }
   };

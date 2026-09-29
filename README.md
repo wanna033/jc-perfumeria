@@ -19,6 +19,16 @@ Tienda web de **JC Perfumería** (fragancias árabes). Los pedidos llegan por Wh
 
 > El panel es público pero no sirve sin tu token: solo quien tenga el token puede guardar cambios. No compartas el token.
 
+## Qué puedes manejar desde el panel
+
+- **Productos:** nombre, marca, para quién (Mujer / Hombre / Unisex), precio y precio anterior, foto principal y más fotos, perfil olfativo, notas, descripción, y las marcas Destacado, Nuevo y Agotado.
+- **Cupones:** códigos de descuento en porcentaje o valor fijo, con compra mínima opcional. Se pueden activar y desactivar.
+- **Ajustes:** WhatsApp, anuncio superior, textos de portada y "Nosotros", envío gratis, formas de pago y redes sociales.
+- **Testimonios, preguntas frecuentes y copia de seguridad.**
+
+> Si al publicar aparece "no tiene permiso para guardar cambios", edita tu token en GitHub y pon
+> **Repository access → Only select repositories → jc-perfumeria** y **Contents → Read and write**.
+
 ## Estructura
 
 | Carpeta / archivo | Qué es |
