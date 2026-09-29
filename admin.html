@@ -134,7 +134,7 @@
         <label>Rama<input name="branch" id="fBranch" value="main" required></label>
       </div>
       <label>Clave de acceso de GitHub (token)
-        <input name="token" id="fToken" type="password" autocomplete="off" placeholder="github_pat_…" required>
+        <input name="token" id="fToken" type="password" autocomplete="off" placeholder="ghp_… o github_pat_…" required>
       </label>
       <div class="checks"><label><input type="checkbox" id="fRemember"> Recordar en este equipo</label></div>
       <div class="err" id="loginErr"></div>
@@ -143,11 +143,10 @@
     <div class="help">
       <b>¿Cómo obtengo mi clave?</b> Solo se hace una vez:
       <ol>
-        <li>Entra a <a href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener">GitHub → Fine-grained token</a>.</li>
-        <li>Ponle un nombre (ej. <i>admin tienda</i>) y una fecha de vencimiento.</li>
-        <li>En <b>Repository access</b> elige <b>Only select repositories</b> y selecciona el repositorio de la tienda.</li>
-        <li>En <b>Permissions → Contents</b> elige <b>Read and write</b>.</li>
-        <li>Crea el token, cópialo y pégalo aquí. No lo compartas con nadie.</li>
+        <li>Con tu sesión de GitHub abierta, toca este enlace: <a href="https://github.com/settings/tokens/new?scopes=public_repo&description=Panel%20JC%20Perfumeria" target="_blank" rel="noopener"><b>Crear mi clave</b></a>. Ya viene con el permiso correcto marcado.</li>
+        <li>En <b>Expiration</b> elige cuánto dura (por ejemplo 1 año).</li>
+        <li>Baja y presiona el botón verde <b>Generate token</b>.</li>
+        <li>Copia la clave (empieza con <code>ghp_</code>) y pégala aquí. No se la envíes a nadie.</li>
       </ol>
     </div>
   </div>
