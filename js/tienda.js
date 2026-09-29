@@ -103,6 +103,9 @@
     const sale = P.filter(onSale).length; if (sale) chip(vg, "view", "Ofertas", "ofertas", sale);
     const nuevos = P.filter(p => p.nuevo).length; if (nuevos) chip(vg, "view", "Nuevos", "nuevos", nuevos);
     chip(vg, "view", "♥ Favoritos", "favoritos", P.filter(p => favs.has(p.id)).length);
+    // En celular, los mismos accesos rápidos van en una fila deslizable sobre los productos
+    const qk = $("#quick"); qk.innerHTML = "";
+    [...vg.querySelectorAll(".chip")].forEach(c => { const k = c.cloneNode(true); k.onclick = c.onclick; qk.appendChild(k); });
     const count = (arr) => arr.reduce((m, x) => (m[x] = (m[x] || 0) + 1, m), {});
     const brands = count(P.map(p => p.marca).filter(Boolean));
     Object.keys(brands).sort().forEach(b => chip(bg, "marca", b, b, brands[b]));
@@ -148,6 +151,10 @@
     const active = state.view !== "todos" || state.marca || state.perfil || state.q || state.min || state.max;
     $("#clearFilters").hidden = !active;
     $("#count").textContent = list.length + (list.length === 1 ? " producto" : " productos");
+    const nf = [state.marca, state.perfil, state.min || state.max].filter(Boolean).length;
+    $("#filterN").textContent = nf ? `(${nf})` : "";
+    $("#filterBtn").classList.toggle("on", !!nf);
+    $("#sheetApply").textContent = `Ver ${list.length} ${list.length === 1 ? "producto" : "productos"}`;
     $("#seen").hidden = !list.length;
     $("#grid").innerHTML = list.length ? list.map(p => `
       <article class="card${p.agotado ? " soldout" : ""}">
@@ -177,15 +184,26 @@
     const add = e.target.closest("[data-add]"); if (add) addToCart(add.dataset.add, 1);
   });
   $("#sort").onchange = e => { state.sort = e.target.value; render(); };
-  $("#q").oninput = e => { state.q = e.target.value; render(); };
-  $("#q").onkeydown = e => { if (e.key === "Enter") $("#productos").scrollIntoView(); };
+  ["#q", "#q2"].forEach(sel => {
+    $(sel).oninput = e => { state.q = e.target.value; $("#q").value = $("#q2").value = state.q; render(); };
+    $(sel).onkeydown = e => { if (e.key === "Enter") { e.target.blur(); $("#productos").scrollIntoView(); } };
+  });
   $("#pmin").oninput = e => { state.min = e.target.value; render(); };
   $("#pmax").oninput = e => { state.max = e.target.value; render(); };
-  $("#clearFilters").onclick = () => {
+  const clearAll = () => {
     Object.assign(state, { view:"todos", marca:"", perfil:"", q:"", min:"", max:"" });
-    $("#q").value = $("#pmin").value = $("#pmax").value = "";
+    $("#q").value = $("#q2").value = $("#pmin").value = $("#pmax").value = "";
     buildFilters(); render();
   };
+  $("#clearFilters").onclick = clearAll;
+  $("#sheetClear").onclick = clearAll;
+
+  // Filtros como panel inferior en celular
+  const filters = $("#filters");
+  $("#filterBtn").onclick = () => { filters.classList.add("show"); $("#overlay").classList.add("show"); document.body.style.overflow = "hidden"; };
+  const closeFilters = () => { filters.classList.remove("show"); $("#overlay").classList.remove("show"); document.body.style.overflow = ""; };
+  $("#closeFilters").onclick = closeFilters;
+  $("#sheetApply").onclick = () => { closeFilters(); $("#productos").scrollIntoView(); };
 
   // ---------- Favoritos ----------
   function toggleFav(id){
@@ -220,13 +238,15 @@
           ${(p.perfil || []).length ? `<div class="label">Perfil olfativo</div><div class="desc">${esc(p.perfil.join(" • "))}</div>` : ""}
           ${p.descripcion ? `<div class="label">Descripción</div><p class="desc">${esc(p.descripcion)}</p>` : ""}
           ${(p.notas || []).length ? `<div class="label">Notas</div><div class="notes">${p.notas.map(n => `<span>${esc(n)}</span>`).join("")}</div>` : ""}
+          <div class="buybar">
           ${p.agotado ? `
             <div class="row"><a class="btn btn-outline" target="_blank" rel="noopener" href="${waLink(`¡Hola! Quiero que me avisen cuando llegue ${p.nombre}.`)}">Agotado · Avísame cuando llegue</a></div>` : `
             <div class="row">
               <div class="qty"><button data-q="-1" aria-label="Menos">−</button><span id="mq">1</span><button data-q="1" aria-label="Más">+</button></div>
               <button class="btn btn-gold" id="mAdd">Añadir al carrito</button>
-            </div>
-            <a class="btn btn-wa" id="mWa" target="_blank" rel="noopener">${waIcon(18)} Comprar por WhatsApp</a>`}
+              <a class="btn btn-wa wa-buy" id="mWa" target="_blank" rel="noopener" aria-label="Comprar por WhatsApp">${waIcon(18)} <span>Comprar por WhatsApp</span></a>
+            </div>`}
+          </div>
           <div class="mini-actions">
             <button data-mfav class="${favs.has(p.id) ? "on" : ""}">${heart} <span>Favorito</span></button>
             <button id="mShare"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.6 13.5 6.8 4M15.4 6.5l-6.8 4"/></svg> Compartir</button>
@@ -260,7 +280,7 @@
   }
   function closeAll(){
     const wasModal = modal.classList.contains("show");
-    modal.classList.remove("show"); drawer.classList.remove("show"); overlay.classList.remove("show");
+    modal.classList.remove("show"); drawer.classList.remove("show"); overlay.classList.remove("show"); $("#filters").classList.remove("show");
     document.body.style.overflow = "";
     if (wasModal && location.hash.startsWith("#p/")) history.replaceState(null, "", location.pathname + location.search);
   }

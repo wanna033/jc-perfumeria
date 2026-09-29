@@ -85,8 +85,8 @@
       const draft = ls.get("jc_admin_draft", null);
       if (draft && JSON.stringify(normalize(draft)) !== published && confirm("Tienes cambios sin publicar guardados en este equipo. ¿Quieres recuperarlos?")) data = normalize(draft);
       else data = normalize(remote);
-      $("#loginView").hidden = true; $("#appView").hidden = false;
-      if (cfg.local) { $("#publishBtn").disabled = true; $("#publishBtn").title = "Modo sin conexión: no se puede publicar"; }
+      $("#loginView").hidden = true; $("#appView").hidden = false; $("#aBottom").hidden = false;
+      if (cfg.local) ["#publishBtn", "#publishBtn2"].forEach(s => { $(s).disabled = true; $(s).title = "Modo sin conexión: no se puede publicar"; });
       renderAll();
     } catch (err) {
       console.error(err);
@@ -120,7 +120,8 @@
     $("#statusText").textContent = d ? "Cambios sin publicar" : "Todo publicado";
   }
   addEventListener("beforeunload", e => { if (dirty()) { e.preventDefault(); e.returnValue = ""; } });
-  $("#previewBtn").onclick = () => ls.set("jc_admin_draft", data);
+  $("#previewBtn").onclick = $("#previewBtn2").onclick = () => ls.set("jc_admin_draft", data);
+  $("#publishBtn2").onclick = () => $("#publishBtn").click();
 
   // ---------- Pestañas ----------
   $("#tabs").onclick = e => {
@@ -140,9 +141,9 @@
     const rows = P.map((p, i) => ({ p, i })).filter(({ p }) => !q || (p.nombre + " " + p.marca).toLowerCase().includes(q));
     $("#plist").innerHTML = rows.length ? rows.map(({ p, i }) => `
       <div class="prow">
-        <img src="${esc(p.imagen || "assets/logo.png")}" alt="" onerror="this.onerror=null;this.src='assets/logo.png'">
+        <img src="${esc(p.imagen || "assets/logo.png")}" alt="" data-act="edit" data-i="${i}" style="cursor:pointer" onerror="this.onerror=null;this.src='assets/logo.png'">
         <div>
-          <h3>${esc(p.nombre)}</h3>
+          <h3 data-act="edit" data-i="${i}" style="cursor:pointer">${esc(p.nombre)}</h3>
           <div class="sub">${esc(p.marca || "Sin marca")} · <span class="pr">${money(p.precio)}</span>${+p.precioAnterior > +p.precio ? ` <s>${money(p.precioAnterior)}</s>` : ""}</div>
           <div class="pills">
             ${p.agotado ? `<span class="pill red">Agotado</span>` : ""}
