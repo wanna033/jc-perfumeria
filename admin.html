@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>Administrador | JC Perfumería</title>
+<link rel="icon" href="assets/logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/tienda.css?v=2">
+<style>
+  body{background:var(--bg);min-height:100vh}
+  .a-top{position:sticky;top:0;z-index:40;background:rgba(8,7,6,.96);border-bottom:1px solid var(--line);backdrop-filter:blur(8px)}
+  .a-top .wrap{display:flex;align-items:center;gap:14px;height:68px}
+  .a-top img{width:44px;height:44px;border-radius:50%}
+  .a-top h1{font-family:Cinzel,serif;font-size:1.05rem}
+  .a-top .grow{flex:1}
+  .status{font-size:.76rem;color:var(--muted);display:flex;align-items:center;gap:6px}
+  .status i{width:8px;height:8px;border-radius:50%;background:#4caf50;display:inline-block}
+  .status.dirty i{background:#ffb300}
+  .btn-sm{padding:9px 14px;font-size:.68rem}
+  .tabs{display:flex;gap:6px;overflow-x:auto;overflow-y:hidden;scrollbar-width:none;padding:18px 0 0;border-bottom:1px solid var(--line)}
+  .tab{padding:10px 16px;border-radius:10px 10px 0 0;font-size:.82rem;font-weight:600;color:var(--muted);white-space:nowrap}
+  .tab.on{color:var(--gold-2);background:var(--bg-2);border:1px solid var(--line);border-bottom-color:var(--bg-2);margin-bottom:-1px}
+  .panel{padding:26px 0 80px}
+  .panel-head{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:18px}
+  .panel-head h2{font-family:Cinzel,serif;font-size:1.3rem;flex:1}
+  .inp,.a-form input,.a-form textarea,.a-form select{width:100%;background:var(--field);border:1px solid var(--line);border-radius:10px;padding:10px 12px;color:var(--text);font-size:.88rem;outline:0}
+  .a-form input:focus,.a-form textarea:focus,.inp:focus{border-color:var(--gold)}
+  .a-form label{display:flex;flex-direction:column;gap:6px;font-size:.74rem;color:var(--muted);letter-spacing:.04em}
+  .a-form .hint{font-size:.7rem;color:#7d7566}
+  .a-form .grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  .a-form .grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}
+  .a-form{display:grid;gap:14px}
+  .checks{display:flex;gap:18px;flex-wrap:wrap}
+  .checks label{flex-direction:row;align-items:center;gap:8px;font-size:.85rem;color:var(--text)}
+  .checks input{width:18px;height:18px;accent-color:var(--gold)}
+  .plist{display:flex;flex-direction:column;gap:10px}
+  .prow{display:grid;grid-template-columns:64px 1fr auto;gap:14px;align-items:center;padding:10px 12px;border:1px solid var(--line);border-radius:12px;background:var(--card)}
+  .prow img{width:64px;height:64px;object-fit:contain;background:#f7f3ea;border-radius:10px}
+  .prow h3{font-family:Cinzel,serif;font-size:.95rem}
+  .prow .sub{font-size:.76rem;color:var(--muted)}
+  .prow .pr{color:var(--gold-2);font-weight:600;font-size:.88rem}
+  .pills{display:flex;gap:6px;flex-wrap:wrap;margin-top:4px}
+  .pill{font-size:.64rem;padding:2px 8px;border-radius:999px;border:1px solid var(--line);color:var(--muted)}
+  .pill.warn{border-color:#ffb300;color:#ffb300}
+  .pill.red{border-color:var(--sale);color:#ff6b81}
+  .pill.gold{border-color:var(--gold);color:var(--gold-2)}
+  .ractions{display:flex;gap:4px;flex-wrap:wrap;justify-content:flex-end}
+  .ib{width:34px;height:34px;border-radius:8px;border:1px solid var(--line);display:grid;place-items:center;color:var(--gold-2);font-size:.85rem;background:var(--field)}
+  .ib:hover{border-color:var(--gold)}
+  .ib.danger{color:#ff6b81}
+  .ib:disabled{opacity:.3;cursor:default}
+  .card-box{border:1px solid var(--line);border-radius:14px;padding:20px;background:var(--bg-2)}
+  .rows{display:flex;flex-direction:column;gap:12px}
+  .rowbox{border:1px solid var(--line);border-radius:12px;padding:14px;background:var(--card);display:grid;gap:10px;position:relative}
+  .rowbox .ib{position:absolute;top:10px;right:10px}
+  .login{max-width:520px;margin:6vh auto;padding:0 16px}
+  .login .card-box{display:grid;gap:14px}
+  .login img{width:110px;border-radius:50%;margin:0 auto 6px}
+  .login h1{font-family:Cinzel,serif;text-align:center;font-size:1.4rem}
+  .help{font-size:.8rem;color:var(--soft);background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 16px}
+  .help ol{padding-left:18px;display:grid;gap:4px;margin-top:6px}
+  .help a{color:var(--gold-2);text-decoration:underline}
+  .err{color:#ff6b81;font-size:.82rem;min-height:1em}
+  .edit-modal{width:min(820px,calc(100% - 24px))}
+  .edit-modal .inner{padding:26px}
+  .imgdrop{border:1.5px dashed var(--line);border-radius:14px;display:grid;grid-template-columns:140px 1fr;gap:16px;padding:14px;align-items:center}
+  .imgdrop.over{border-color:var(--gold);background:rgba(212,175,55,.06)}
+  .imgdrop img{width:140px;height:140px;object-fit:contain;background:#f7f3ea;border-radius:10px}
+  .progress{position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:120;display:grid;place-items:center}
+  .progress .card-box{min-width:300px;text-align:center}
+  .spinner{width:38px;height:38px;border:3px solid var(--line);border-top-color:var(--gold);border-radius:50%;animation:spin 1s linear infinite;margin:0 auto 14px}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  @media (max-width:700px){
+    .a-form .grid2,.a-form .grid3{grid-template-columns:1fr}
+    .prow{grid-template-columns:52px 1fr}
+    .prow img{width:52px;height:52px}
+    .ractions{grid-column:1/-1;justify-content:flex-start}
+    .imgdrop{grid-template-columns:1fr}
+    .imgdrop img{margin:auto}
+    .a-top .status span{display:none}
+    .hide-sm{display:none}
+  }
+</style>
+</head>
+<body>
+
+<!-- ===== Acceso ===== -->
+<div class="login" id="loginView">
+  <div class="card-box">
+    <img src="assets/logo.png" alt="">
+    <h1 class="gold-text">Panel de administrador</h1>
+    <form class="a-form" id="loginForm">
+      <div class="grid2">
+        <label>Repositorio (usuario/nombre)<input name="repo" id="fRepo" placeholder="usuario/jc-perfumeria" required></label>
+        <label>Rama<input name="branch" id="fBranch" value="main" required></label>
+      </div>
+      <label>Clave de acceso de GitHub (token)
+        <input name="token" id="fToken" type="password" autocomplete="off" placeholder="github_pat_…" required>
+      </label>
+      <div class="checks"><label><input type="checkbox" id="fRemember"> Recordar en este equipo</label></div>
+      <div class="err" id="loginErr"></div>
+      <button class="btn btn-gold" type="submit">Entrar</button>
+    </form>
+    <div class="help">
+      <b>¿Cómo obtengo mi clave?</b> Solo se hace una vez:
+      <ol>
+        <li>Entra a <a href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener">GitHub → Fine-grained token</a>.</li>
+        <li>Ponle un nombre (ej. <i>admin tienda</i>) y una fecha de vencimiento.</li>
+        <li>En <b>Repository access</b> elige <b>Only select repositories</b> y selecciona el repositorio de la tienda.</li>
+        <li>En <b>Permissions → Contents</b> elige <b>Read and write</b>.</li>
+        <li>Crea el token, cópialo y pégalo aquí. No lo compartas con nadie.</li>
+      </ol>
+    </div>
+  </div>
+</div>
+
+<!-- ===== Panel ===== -->
+<div id="appView" hidden>
+  <div class="a-top">
+    <div class="wrap">
+      <img src="assets/logo.png" alt="">
+      <h1 class="gold-text hide-sm">Administrador</h1>
+      <div class="grow"></div>
+      <div class="status" id="status"><i></i><span id="statusText">Todo publicado</span></div>
+      <a class="btn btn-outline btn-sm" id="previewBtn" href="index.html?preview=1" target="_blank">Vista previa</a>
+      <button class="btn btn-gold btn-sm" id="publishBtn">Publicar</button>
+      <button class="ib" id="logoutBtn" title="Salir">⎋</button>
+    </div>
+  </div>
+
+  <div class="wrap">
+    <div class="tabs" id="tabs">
+      <button class="tab on" data-tab="productos">Productos</button>
+      <button class="tab" data-tab="ajustes">Ajustes de la tienda</button>
+      <button class="tab" data-tab="testimonios">Testimonios</button>
+      <button class="tab" data-tab="preguntas">Preguntas</button>
+      <button class="tab" data-tab="respaldo">Respaldo</button>
+    </div>
+
+    <!-- Productos -->
+    <div class="panel" data-panel="productos">
+      <div class="panel-head">
+        <h2 class="gold-text">Productos <small id="pCount" style="font-size:.8rem;color:var(--muted)"></small></h2>
+        <input class="inp" id="pSearch" placeholder="Buscar…" style="max-width:220px">
+        <button class="btn btn-gold btn-sm" id="newProduct">+ Nuevo producto</button>
+      </div>
+      <div class="plist" id="plist"></div>
+    </div>
+
+    <!-- Ajustes -->
+    <div class="panel" data-panel="ajustes" hidden>
+      <div class="panel-head"><h2 class="gold-text">Ajustes de la tienda</h2></div>
+      <form class="a-form card-box" id="settingsForm">
+        <div class="grid2">
+          <label>Nombre de la tienda<input name="nombre"></label>
+          <label>Correo<input name="email" type="email"></label>
+        </div>
+        <div class="grid2">
+          <label>WhatsApp (con indicativo, solo números)<input name="whatsapp" inputmode="numeric" placeholder="573001234567"><span class="hint">Ej: 57 + tu número → 573217783770</span></label>
+          <label>Teléfono como se muestra<input name="telefonoVisible"></label>
+        </div>
+        <label>Barra de anuncio (arriba de la página; vacío = oculta)<input name="anuncio"></label>
+        <label>Portada · etiqueta pequeña<input name="heroEtiqueta"></label>
+        <label>Portada · título<input name="heroTitulo"></label>
+        <label>Portada · texto<textarea name="heroTexto" rows="2"></textarea></label>
+        <label>Sección “Nosotros”<textarea name="nosotros" rows="5"></textarea></label>
+        <div class="grid2">
+          <label>Envío gratis desde ($, 0 = no mostrar)<input name="envioGratisDesde" type="number" min="0" step="1000"></label>
+          <label>Formas de pago (separadas por coma)<input name="formasPago" placeholder="Transferencia, Nequi, Efectivo"></label>
+        </div>
+        <div class="grid3">
+          <label>Instagram (enlace)<input name="instagram" placeholder="https://instagram.com/…"></label>
+          <label>Facebook (enlace)<input name="facebook" placeholder="https://facebook.com/…"></label>
+          <label>TikTok (enlace)<input name="tiktok" placeholder="https://tiktok.com/@…"></label>
+        </div>
+      </form>
+    </div>
+
+    <!-- Testimonios -->
+    <div class="panel" data-panel="testimonios" hidden>
+      <div class="panel-head">
+        <h2 class="gold-text">Testimonios</h2>
+        <button class="btn btn-gold btn-sm" id="addTes">+ Agregar testimonio</button>
+      </div>
+      <p class="desc" style="margin-bottom:14px">Agrega comentarios reales de tus clientes (con su permiso). Si no hay ninguno, la sección no se muestra.</p>
+      <div class="rows" id="tesList"></div>
+    </div>
+
+    <!-- Preguntas -->
+    <div class="panel" data-panel="preguntas" hidden>
+      <div class="panel-head">
+        <h2 class="gold-text">Preguntas frecuentes</h2>
+        <button class="btn btn-gold btn-sm" id="addFaq">+ Agregar pregunta</button>
+      </div>
+      <div class="rows" id="faqList"></div>
+    </div>
+
+    <!-- Respaldo -->
+    <div class="panel" data-panel="respaldo" hidden>
+      <div class="panel-head"><h2 class="gold-text">Copia de seguridad</h2></div>
+      <div class="card-box a-form">
+        <p class="desc">Descarga todos los datos de tu tienda en un archivo, o restaura uno descargado antes. Restaurar reemplaza lo que tienes en el panel (no se publica hasta que presiones <b>Publicar</b>).</p>
+        <div style="display:flex;gap:10px;flex-wrap:wrap">
+          <button class="btn btn-outline btn-sm" id="exportBtn">Descargar respaldo</button>
+          <label class="btn btn-outline btn-sm" style="cursor:pointer">Restaurar respaldo<input type="file" id="importFile" accept="application/json,.json" hidden></label>
+          <button class="btn btn-outline btn-sm" id="discardBtn">Descartar cambios sin publicar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Editor de producto -->
+<div class="overlay" id="overlay"></div>
+<div class="modal edit-modal" id="editModal" role="dialog" aria-modal="true">
+  <div class="inner">
+    <h3 class="gold-text" id="editTitle" style="margin-bottom:16px">Nuevo producto</h3>
+    <form class="a-form" id="productForm">
+      <div class="imgdrop" id="imgDrop">
+        <img id="imgPreview" src="assets/logo.png" alt="">
+        <div class="a-form">
+          <label class="btn btn-outline btn-sm" style="cursor:pointer;justify-self:start">Subir foto<input type="file" id="imgFile" accept="image/*" hidden></label>
+          <span class="hint">También puedes arrastrar la foto aquí. Se optimiza automáticamente.</span>
+          <label>…o pega el enlace de una imagen<input name="imagenUrl" placeholder="https://…"></label>
+        </div>
+      </div>
+      <div class="grid2">
+        <label>Nombre *<input name="nombre" required></label>
+        <label>Marca<input name="marca" list="brandList"><datalist id="brandList"></datalist></label>
+      </div>
+      <div class="grid3">
+        <label>Precio *<input name="precio" type="number" min="0" step="1000" required></label>
+        <label>Precio anterior (tachado)<input name="precioAnterior" type="number" min="0" step="1000"><span class="hint">Vacío = sin descuento</span></label>
+        <label>Presentación<input name="presentacion" placeholder="Eau de Parfum · 100 ml"></label>
+      </div>
+      <label>Perfil olfativo (separado por coma)<input name="perfil" placeholder="Vainilla, Ámbar, Especiado"></label>
+      <label>Notas (separadas por coma)<input name="notas" placeholder="Bergamota, Rosa, Almizcle"></label>
+      <label>Descripción<textarea name="descripcion" rows="3"></textarea></label>
+      <div class="checks">
+        <label><input type="checkbox" name="destacado"> ★ Destacado</label>
+        <label><input type="checkbox" name="nuevo"> Nuevo</label>
+        <label><input type="checkbox" name="agotado"> Agotado</label>
+      </div>
+      <div class="err" id="editErr"></div>
+      <div style="display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap">
+        <button type="button" class="btn btn-outline btn-sm" id="cancelEdit">Cancelar</button>
+        <button type="submit" class="btn btn-gold btn-sm">Guardar producto</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+<div class="progress" id="progress" hidden><div class="card-box"><div class="spinner"></div><div id="progressText">Publicando…</div></div></div>
+
+<script src="js/admin.js?v=2"></script>
+</body>
+</html>

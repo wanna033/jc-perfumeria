@@ -1,0 +1,125 @@
+{
+  "ajustes": {
+    "nombre": "JC Perfumería",
+    "whatsapp": "573217783770",
+    "telefonoVisible": "321 778 3770",
+    "email": "jeancarlosmurilloibarguen@gmail.com",
+    "anuncio": "Asesoría personalizada por WhatsApp  ✦  Pago seguro  ✦  Envío rápido  ✦  Fragancias árabes",
+    "heroEtiqueta": "Fragancias árabes originales",
+    "heroTitulo": "El arte de dejar huella",
+    "heroTexto": "Perfumes de Lattafa, Al Haramain y Maison Alhambra seleccionados para ti. Elegancia, intensidad y duración en cada gota.",
+    "nosotros": "Somos una perfumería dedicada a las fragancias árabes de alta calidad. Seleccionamos cada perfume por su carácter, proyección y duración, para que encuentres el aroma que te representa.\n\nTe asesoramos de forma personalizada por WhatsApp: cuéntanos qué notas te gustan y para qué ocasión lo buscas, y te ayudamos a elegir.",
+    "envioGratisDesde": 0,
+    "formasPago": ["Transferencia", "Nequi / Daviplata", "Efectivo"],
+    "instagram": "",
+    "facebook": "",
+    "tiktok": ""
+  },
+  "productos": [
+    {
+      "id": "yara-tous",
+      "nombre": "YARA TOUS",
+      "marca": "Lattafa",
+      "presentacion": "Eau de Parfum",
+      "precio": 180000,
+      "precioAnterior": 210000,
+      "imagen": "https://api.treggio.co/img/600/products/6ab1455d7b694_1790002525.webp",
+      "perfil": ["Vainilla", "Frutal", "Cremoso"],
+      "descripcion": "Una fragancia dulce, cremosa y femenina, con un carácter suave y reconfortante. Una opción versátil para quienes disfrutan de aromas golosos y delicados.",
+      "notas": ["Orquídea", "Heliotropo", "Mandarina", "Frutas tropicales", "Vainilla", "Almizcle", "Sándalo"],
+      "agotado": false,
+      "nuevo": false,
+      "destacado": false
+    },
+    {
+      "id": "amber-oud-dubai-night",
+      "nombre": "AMBER OUD DUBAI NIGHT",
+      "marca": "Al Haramain",
+      "presentacion": "Extrait de Parfum · 75 ml",
+      "precio": 330000,
+      "precioAnterior": 380000,
+      "imagen": "https://api.treggio.co/img/600/products/6ab145057286f_1790002437.webp",
+      "perfil": ["Amaderado", "Ámbar", "Especiado"],
+      "descripcion": "Una versión más intensa y nocturna, con un carácter elegante, profundo y envolvente. Ideal para noches y ocasiones especiales.",
+      "notas": ["Especias", "Frutas", "Ámbar", "Maderas", "Almizcle"],
+      "agotado": false,
+      "nuevo": false,
+      "destacado": false
+    },
+    {
+      "id": "amber-oud-aqua-dubai",
+      "nombre": "AMBER OUD AQUA DUBAI",
+      "marca": "Al Haramain",
+      "presentacion": "Extrait de Parfum · 75 ml",
+      "precio": 330000,
+      "precioAnterior": 380000,
+      "imagen": "https://api.treggio.co/img/600/products/6ab144d234257_1790002386.webp",
+      "perfil": ["Cítrico", "Acuático", "Amaderado"],
+      "descripcion": "Una fragancia fresca y sofisticada, con una salida luminosa y un fondo amaderado. Excelente opción para clima cálido y uso diario.",
+      "notas": ["Cítricos", "Frutas", "Notas acuáticas", "Ámbar", "Almizcle", "Maderas"],
+      "agotado": false,
+      "nuevo": false,
+      "destacado": false
+    },
+    {
+      "id": "lattafa-atheeri",
+      "nombre": "LATTAFA ATHEERI",
+      "marca": "Lattafa",
+      "presentacion": "Eau de Parfum",
+      "precio": 230000,
+      "precioAnterior": 300000,
+      "imagen": "https://api.treggio.co/img/600/products/6ab1448f41eb8_1790002319.webp",
+      "perfil": ["Floral", "Frutal", "Dulce"],
+      "descripcion": "Un perfume femenino y luminoso de perfil floral-frutal, pensado para transmitir elegancia, dulzura y una sensación moderna y sofisticada.",
+      "notas": ["Notas frutales", "Flores blancas", "Jazmín", "Vainilla", "Almizcle"],
+      "agotado": false,
+      "nuevo": false,
+      "destacado": false
+    },
+    {
+      "id": "asad-bourbon",
+      "nombre": "ASAD BOURBON",
+      "marca": "Lattafa",
+      "presentacion": "Eau de Parfum · 100 ml",
+      "precio": 200000,
+      "precioAnterior": 220000,
+      "imagen": "https://api.treggio.co/img/600/products/6ab144334c57b_1790002227.webp",
+      "perfil": ["Vainilla", "Ámbar", "Especiado"],
+      "descripcion": "Una fragancia cálida, dulce y especiada, con un perfil envolvente y elegante. Perfecta para noches, citas y ocasiones especiales.",
+      "notas": ["Pimienta rosa", "Lavanda", "Ciruela", "Nuez moscada", "Cacao", "Vetiver", "Ámbar", "Bourbon vainilla", "Sándalo"],
+      "agotado": false,
+      "nuevo": false,
+      "destacado": false
+    },
+    {
+      "id": "odyssey-bahamas",
+      "nombre": "ODYSSEY BAHAMAS",
+      "marca": "Maison Alhambra",
+      "presentacion": "Eau de Parfum",
+      "precio": 210000,
+      "precioAnterior": 250000,
+      "imagen": "https://api.treggio.co/img/600/products/6ab143dc3e54b_1790002140.webp",
+      "perfil": ["Tropical", "Fresco"],
+      "descripcion": "Una fragancia de estilo veraniego, fresca y vibrante, con un carácter tropical ideal para días cálidos y momentos informales.",
+      "notas": ["Cítricos", "Frutas tropicales", "Notas acuáticas", "Maderas", "Almizcle"],
+      "agotado": false,
+      "nuevo": false,
+      "destacado": false
+    }
+  ],
+  "testimonios": [],
+  "preguntas": [
+    {
+      "pregunta": "¿Cómo hago mi pedido?",
+      "respuesta": "Agrega los perfumes que quieras al carrito, completa tus datos y presiona \"Finalizar pedido por WhatsApp\". Te llegará el resumen listo para enviarnos y te confirmamos todo por chat."
+    },
+    {
+      "pregunta": "¿Cómo pago y cuánto tarda el envío?",
+      "respuesta": "Te confirmamos los métodos de pago disponibles, el costo y el tiempo de envío por WhatsApp según tu ciudad."
+    },
+    {
+      "pregunta": "¿Me pueden ayudar a elegir un perfume?",
+      "respuesta": "¡Claro! Escríbenos por WhatsApp contándonos qué aromas te gustan (dulces, frescos, amaderados…) y para qué ocasión lo buscas, y te recomendamos opciones."
+    }
+  ]
+}
