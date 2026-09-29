@@ -9,7 +9,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/tienda.css?v=8">
+<link rel="stylesheet" href="css/tienda.css?v=9">
 <style>
   body{background:var(--bg);min-height:100vh}
   .a-top{position:sticky;top:0;z-index:40;background:rgba(8,7,6,.96);border-bottom:1px solid var(--line);backdrop-filter:blur(8px)}
@@ -86,6 +86,9 @@
   }
   .top-actions{display:contents}
   .a-bottom{display:none}
+  .pc-box{display:grid;gap:8px;text-align:center;border:1px solid var(--gold);border-radius:14px;padding:16px;background:rgba(212,175,55,.08)}
+  .pc-box span{font-size:.82rem;color:var(--soft)}
+  .pc-box~#loginForm,.pc-box~.help{display:none}
   .extra-photos{border:1px solid var(--line);border-radius:14px;padding:14px;display:grid;gap:12px}
   .extra-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(84px,1fr));gap:10px}
   .extra-grid:empty{display:none}
@@ -323,6 +326,6 @@
 <div class="toast" id="toast"></div>
 <div class="progress" id="progress" hidden><div class="card-box"><div class="spinner"></div><div id="progressText">Publicando…</div></div></div>
 
-<script src="js/admin.js?v=8"></script>
+<script src="js/admin.js?v=9"></script>
 </body>
 </html>

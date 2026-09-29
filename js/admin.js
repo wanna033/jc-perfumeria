@@ -55,11 +55,26 @@
   $("#fBranch").value = saved?.branch || "main";
   if (saved?.token) { $("#fToken").value = saved.token; $("#fRemember").checked = !!ls.get("jc_admin_cfg", null); }
 
-  if (/^(localhost|127\.0\.0\.1)$/.test(location.hostname)) {
-    const b = document.createElement("button");
-    b.type = "button"; b.className = "btn btn-outline btn-sm"; b.textContent = "Probar sin conexión (solo vista previa)";
-    b.onclick = () => start({ local: true, repo: "local", branch: "main" });
-    $("#loginForm").appendChild(b);
+  const isLocalHost = /^(localhost|127\.0\.0\.1)$/.test(location.hostname);
+  if (isLocalHost) {
+    fetch("/api/estado", { cache: "no-store" }).then(r => r.ok ? r.json() : null).catch(() => null).then(st => {
+      if (st && st.modo === "computador") {
+        const box = document.createElement("div");
+        box.className = "pc-box";
+        box.innerHTML = `<b>Modo computador</b><span>Publicas con la sesión de GitHub de este equipo. No necesitas clave.</span>`;
+        const b = document.createElement("button");
+        b.type = "button"; b.className = "btn btn-gold"; b.textContent = "Entrar al panel";
+        b.onclick = () => start({ pc: true, repo: "computador", branch: "main" });
+        box.appendChild(b);
+        $("#loginForm").before(box);
+        start({ pc: true, repo: "computador", branch: "main" });
+      } else {
+        const b = document.createElement("button");
+        b.type = "button"; b.className = "btn btn-outline btn-sm"; b.textContent = "Probar sin conexión (solo vista previa)";
+        b.onclick = () => start({ local: true, repo: "local", branch: "main" });
+        $("#loginForm").appendChild(b);
+      }
+    });
   }
 
   $("#loginForm").onsubmit = async e => {
@@ -75,7 +90,7 @@
     busy("Cargando tu tienda…");
     try {
       let remote;
-      if (cfg.local) {
+      if (cfg.local || cfg.pc) {
         remote = await (await fetch(DATA_PATH + "?v=" + Date.now(), { cache: "no-store" })).json();
       } else {
         const f = await getFile(DATA_PATH);
@@ -87,6 +102,7 @@
       else data = normalize(remote);
       $("#loginView").hidden = true; $("#appView").hidden = false; $("#aBottom").hidden = false;
       if (cfg.local) ["#publishBtn", "#publishBtn2"].forEach(s => { $(s).disabled = true; $(s).title = "Modo sin conexión: no se puede publicar"; });
+      if (cfg.pc) { $("#statusText").dataset.pc = "1"; document.title = "Administrador (computador) | JC Perfumería"; }
       renderAll();
     } catch (err) {
       console.error(err);
@@ -97,6 +113,7 @@
     } finally { busy(false); }
   }
   $("#logoutBtn").onclick = () => {
+    if (cfg && cfg.pc) return toast("En modo computador no hace falta salir: cierra la ventana negra del panel cuando termines.");
     if (dirty() && !confirm("Tienes cambios sin publicar. Quedan guardados en este equipo. ¿Salir?")) return;
     ss.del("jc_admin_cfg"); ls.del("jc_admin_cfg"); location.reload();
   };
@@ -425,6 +442,29 @@
         if (isData(p.imagen)) pend.push({ p, set: v => { p.imagen = v; }, src: p.imagen });
         (p.imagenes || []).forEach((x, j) => { if (isData(x)) pend.push({ p, set: v => { p.imagenes[j] = v; }, src: x }); });
       });
+      if (cfg.pc) {
+        busy("Publicando…");
+        const archivos = pend.map(({ p, src }, k) => {
+          const [meta, b64] = src.split(",");
+          const ext = meta.includes("webp") ? "webp" : meta.includes("png") ? "png" : "jpg";
+          return { ruta: `${IMG_DIR}/${p.id}-${Date.now().toString(36)}${k}.${ext}`, base64: b64 };
+        });
+        const copia = JSON.parse(JSON.stringify(data));
+        let n = 0;
+        copia.productos.forEach(p => {
+          if (isData(p.imagen)) p.imagen = archivos[n++].ruta;
+          p.imagenes = (p.imagenes || []).map(x => isData(x) ? archivos[n++].ruta : x);
+        });
+        const r = await fetch("/api/publicar", { method: "POST", headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ archivos, datos: JSON.stringify(copia, null, 2) + "\n" }) });
+        const out = await r.json().catch(() => ({ ok: false, error: "Respuesta no válida" }));
+        if (!out.ok) { const e = new Error(out.error || "Error al publicar"); e.pc = true; throw e; }
+        data = copia;
+        published = JSON.stringify(data);
+        ls.del("jc_admin_draft");
+        renderProducts(); changed(); busy(false);
+        return toast("¡Publicado! La tienda se actualiza en 1–2 minutos ✦");
+      }
       for (let k = 0; k < pend.length; k++) {
         const { p, set, src } = pend[k];
         busy(`Subiendo fotos (${k + 1} de ${pend.length})…`);
@@ -452,6 +492,10 @@
       toast("¡Publicado! La tienda se actualiza en 1–2 minutos ✦");
     } catch (err) {
       console.error(err); busy(false);
+      if (err.pc || (cfg && cfg.pc)) {
+        alert("No se pudo publicar desde este computador.\n\nRevisa que tengas internet y vuelve a intentarlo. Tus cambios siguen guardados aquí.\n\n(Detalle: " + err.message + ")");
+        return renderProducts(), changed();
+      }
       const ghMsg = err.message ? `\n\n(Mensaje de GitHub: ${err.status || ""} ${err.message})` : "";
       alert((err.status === 401
         ? "La clave (token) no es válida o ya venció. Presiona Salir (arriba a la derecha) y vuelve a entrar con tu clave nueva."
