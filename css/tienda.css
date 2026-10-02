@@ -489,3 +489,110 @@ footer{border-top:1px solid var(--line);padding:50px 0 30px;background:#060505}
 @media (max-height:720px) and (min-width:601px){.hero p{display:none}.hero h1{margin-bottom:0}}
 @media (hover:none){.card:hover{transform:none;box-shadow:none}.card:hover .img img{transform:none}}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+/* ---------- Pulido visual de JC Perfumería ---------- */
+.skip-link{position:fixed;top:10px;left:10px;z-index:200;transform:translateY(-160%);padding:10px 16px;border-radius:999px;background:var(--gold-2);color:#171109;font-weight:700}
+.skip-link:focus{transform:none}
+header:not(.solid){background:linear-gradient(180deg,rgba(7,6,5,.62),transparent)}
+header.solid{background:rgba(8,7,6,.84);backdrop-filter:blur(16px);box-shadow:0 10px 30px rgba(0,0,0,.16)}
+.nav{gap:20px}
+.brand{display:flex;align-items:center;gap:11px;flex:none}
+.brand img{width:52px;height:52px}
+.brand-copy{display:flex;flex-direction:column;line-height:1;gap:5px}
+.brand-copy strong{font-family:Cinzel,serif;font-size:1rem;letter-spacing:.2em;color:var(--gold-2)}
+.brand-copy small{font-size:.58rem;letter-spacing:.22em;text-transform:uppercase;color:var(--soft)}
+.menu{gap:clamp(12px,1.55vw,21px);font-size:.69rem;letter-spacing:.1em}
+.nav-right>.search{width:190px}
+.hero{height:min(900px,90svh);min-height:640px}
+.hero::after{background:
+  linear-gradient(90deg,rgba(7,6,5,.84) 0%,rgba(7,6,5,.58) 34%,rgba(7,6,5,.16) 72%,rgba(7,6,5,.08) 100%),
+  linear-gradient(to top,var(--bg) 0%,rgba(10,9,8,.32) 18%,transparent 58%,rgba(0,0,0,.3) 100%)}
+.hero-inner{width:min(1200px,100% - 48px);text-align:left;display:flex;flex-direction:column;align-items:flex-start;padding-bottom:clamp(58px,9vh,112px)}
+.hero .eyebrow{display:flex;align-items:center;gap:12px;font-size:.68rem;letter-spacing:.3em}
+.hero .eyebrow::before{content:"";display:block;width:34px;height:1px;background:var(--gold-2);box-shadow:0 0 14px rgba(243,210,122,.55)}
+.hero h1{max-width:760px;font-size:clamp(2.8rem,5.8vw,5rem);line-height:1.04;letter-spacing:.025em;margin:16px 0}
+.hero p{max-width:490px;margin:0;color:rgba(244,237,224,.84);font-size:1rem;line-height:1.8}
+.hero-cta{justify-content:flex-start;margin-top:30px;gap:14px}
+.hero-cta .btn{min-height:50px}
+.btn{letter-spacing:.1em}
+.btn-gold{box-shadow:0 10px 32px rgba(212,175,55,.24)}
+.btn-gold:hover{box-shadow:0 14px 38px rgba(212,175,55,.34)}
+.perks{position:relative;z-index:2;margin-top:-30px;padding:0 0 10px;gap:12px}
+.perk{min-height:94px;padding:18px;background:rgba(19,16,12,.92);backdrop-filter:blur(12px);border-color:rgba(212,175,55,.2);border-radius:14px;box-shadow:0 14px 34px rgba(0,0,0,.2)}
+.perk b{font-size:.78rem;letter-spacing:.04em}
+.perk span{font-size:.7rem;line-height:1.5}
+section#productos{padding-top:84px}
+.sec-head{margin-bottom:34px}
+.sec-head h2{letter-spacing:.025em}
+.divider::before,.divider::after{width:84px;opacity:.75}
+.shop{gap:28px}
+.filters:not(.show){border:1px solid rgba(212,175,55,.15);border-radius:16px;padding:16px;background:linear-gradient(155deg,rgba(24,21,15,.84),rgba(13,12,10,.76))}
+.filters .group:last-child{border-bottom:0;margin-bottom:0;padding-bottom:0}
+.chip{border-radius:9px}
+.chip.active{box-shadow:inset 0 0 0 1px rgba(212,175,55,.16)}
+.toolbar{padding:0 0 12px;border-bottom:1px solid rgba(212,175,55,.13)}
+.toolbar .count{font-size:.82rem;letter-spacing:.025em}
+.toolbar select{min-height:42px}
+.grid{gap:18px}
+.card{border-color:rgba(212,175,55,.14);border-radius:16px;background:linear-gradient(160deg,#1a1711,#12100d);box-shadow:0 8px 24px rgba(0,0,0,.12)}
+.card:hover{transform:translateY(-4px);border-color:rgba(212,175,55,.43);box-shadow:0 18px 38px rgba(0,0,0,.34),0 0 28px rgba(212,175,55,.08)}
+.card .img{aspect-ratio:1/1.04;background:#f4f1e9}
+.card .img img{padding:8px}
+.card .body{padding:16px 15px 16px;gap:7px}
+.card .brandname{letter-spacing:.16em;color:#b7a779}
+.card h3{font-size:.94rem;line-height:1.42;min-height:2.65em}
+.card .tags{font-size:.7rem;line-height:1.5;color:#c7ae6c}
+.card .actions{margin-top:12px}
+.card .actions .btn{min-height:42px;letter-spacing:.08em}
+.about{background:radial-gradient(ellipse at 16% 50%,rgba(212,175,55,.055),transparent 48%),linear-gradient(180deg,var(--bg),var(--bg-2))}
+.about-media{border-radius:18px;border-color:rgba(212,175,55,.25);box-shadow:0 24px 70px rgba(0,0,0,.44)}
+.about-text p{max-width:540px;line-height:1.85}
+.stat{background:rgba(255,255,255,.018);border-color:rgba(212,175,55,.16)}
+.cta-band{border-radius:22px;background:radial-gradient(ellipse at 50% 0,rgba(212,175,55,.12),transparent 72%),linear-gradient(145deg,#17140f,#100f0d);box-shadow:0 24px 60px rgba(0,0,0,.17)}
+footer{background:linear-gradient(180deg,#090807,#050504)}
+.foot h5{letter-spacing:.2em}
+.copy{padding-inline:16px;line-height:1.7}
+:where(a,button,input,select,textarea):focus-visible{outline:2px solid var(--gold-2);outline-offset:3px}
+
+@media (max-width:980px){
+  .nav{gap:12px}
+  .brand img{width:48px;height:48px}
+  .filters:not(.show){border-radius:20px 20px 0 0;padding:0 18px calc(16px + env(safe-area-inset-bottom));background:var(--bg-2)}
+}
+@media (max-width:600px){
+  .nav{height:62px}
+  .brand{gap:8px}
+  .brand img{width:42px;height:42px}
+  .brand-copy strong{font-size:.9rem}
+  .brand-copy small{font-size:.52rem}
+  .hero{height:100svh;min-height:620px}
+  .hero::after{background:linear-gradient(to top,var(--bg) 0%,var(--bg) 21%,rgba(10,9,8,.6) 37%,transparent 56%,rgba(0,0,0,.32) 100%)}
+  .hero-inner{width:calc(100% - 32px);text-align:center;align-items:center;padding-bottom:calc(78px + env(safe-area-inset-bottom))}
+  .hero .eyebrow{font-size:.58rem;letter-spacing:.2em}
+  .hero .eyebrow::before{width:20px}
+  .hero h1{max-width:440px;font-size:clamp(1.9rem,8.3vw,2.4rem);line-height:1.12;margin:10px 0}
+  .hero p{max-width:365px;font-size:.84rem;line-height:1.65}
+  .hero-cta{justify-content:center;margin-top:20px;gap:9px;width:100%}
+  .hero-cta .btn{min-height:46px;padding:12px 13px;font-size:.62rem;letter-spacing:.07em}
+  .perks{margin-top:-12px;padding-top:0;gap:9px}
+  .perk{min-height:84px;padding:11px 10px;border-radius:12px;gap:8px}
+  .perk b{font-size:.71rem}
+  .perk span{font-size:.64rem}
+  section#productos{padding-top:62px}
+  .sec-head{margin-bottom:24px}
+  .grid{gap:10px}
+  .card{border-radius:13px}
+  .card .img{aspect-ratio:1/1.02}
+  .card .img img{padding:4px}
+  .card .body{padding:10px 9px 11px;gap:4px}
+  .card .brandname{font-size:.55rem;letter-spacing:.11em}
+  .card h3{font-size:.75rem;min-height:2.7em;line-height:1.35}
+  .card .tags{font-size:.64rem}
+  .card .actions{margin-top:8px}
+  .card .actions .btn{min-height:40px}
+  .toolbar{padding-bottom:10px}
+  .about-grid{gap:22px}
+  .about-media{border-radius:14px}
+  .stats{margin-top:20px}
+  .cta-band{border-radius:17px}
+}

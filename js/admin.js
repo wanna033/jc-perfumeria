@@ -22,6 +22,8 @@
   };
   const slug = s => String(s || "").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") || "producto";
   const list = s => String(s || "").split(",").map(x => x.trim()).filter(Boolean);
+  // JSON con las claves ordenadas: dos datos iguales dan el mismo texto aunque sus campos estén en otro orden
+  const stable = v => JSON.stringify(v, (k, x) => x && typeof x === "object" && !Array.isArray(x) ? Object.fromEntries(Object.keys(x).sort().map(key => [key, x[key]])) : x);
 
   let cfg = null;          // { repo, branch, token, local }
   let data = null;         // datos en edición
@@ -73,6 +75,7 @@
         b.type = "button"; b.className = "btn btn-outline btn-sm"; b.textContent = "Probar sin conexión (solo vista previa)";
         b.onclick = () => start({ local: true, repo: "local", branch: "main" });
         $("#loginForm").appendChild(b);
+        if (saved?.token) start(saved);
       }
     });
   }
@@ -96,9 +99,9 @@
         const f = await getFile(DATA_PATH);
         remoteSha = f.sha; remote = JSON.parse(b64decodeText(f.content));
       }
-      published = JSON.stringify(normalize(remote));
+      published = stable(normalize(remote));
       const draft = ls.get("jc_admin_draft", null);
-      if (draft && JSON.stringify(normalize(draft)) !== published && confirm("Tienes cambios sin publicar guardados en este equipo. ¿Quieres recuperarlos?")) data = normalize(draft);
+      if (draft && stable(normalize(draft)) !== published && confirm("Tienes cambios sin publicar guardados en este equipo. ¿Quieres recuperarlos?")) data = normalize(draft);
       else data = normalize(remote);
       $("#loginView").hidden = true; $("#appView").hidden = false; $("#aBottom").hidden = false;
       if (cfg.local) ["#publishBtn", "#publishBtn2"].forEach(s => { $(s).disabled = true; $(s).title = "Modo sin conexión: no se puede publicar"; });
@@ -130,7 +133,20 @@
   }
 
   // ---------- Estado de cambios ----------
-  const dirty = () => data && JSON.stringify(data) !== published;
+  const dirty = () => data && stable(data) !== published;
+
+  // ¿Alguien publicó desde otro equipo después de que se abrió el panel?
+  async function changedElsewhere(){
+    let remote;
+    if (cfg.pc) {
+      await fetch("/api/estado", { cache: "no-store" });       // trae la última versión de GitHub
+      remote = await (await fetch(DATA_PATH + "?v=" + Date.now(), { cache: "no-store" })).json();
+    } else {
+      const f = await getFile(DATA_PATH);
+      remoteSha = f.sha; remote = JSON.parse(b64decodeText(f.content));
+    }
+    return stable(normalize(remote)) !== published;
+  }
   function changed(){
     if (!ls.set("jc_admin_draft", data)) toast("Aviso: no se pudo guardar el borrador en este equipo (espacio lleno).");
     const d = dirty();
@@ -436,6 +452,8 @@
     try {
       const badCup = data.cupones.find(c => !c.codigo || !(+c.valor > 0));
       if (badCup) return toast("Hay un cupón sin código o sin descuento. Revísalo en la pestaña Cupones.");
+      busy("Revisando la tienda…");
+      if (await changedElsewhere() && !confirm("La tienda se modificó desde otro equipo después de que abriste este panel.\n\nSi publicas ahora, esos cambios se reemplazarán por los tuyos.\n\n¿Publicar de todas formas?\n\n(Si no estás seguro, presiona Cancelar, usa “Exportar respaldo” y luego recarga el panel.)")) return busy(false);
       const isData = x => String(x).startsWith("data:");
       const pend = [];
       data.productos.forEach(p => {
@@ -460,7 +478,7 @@
         const out = await r.json().catch(() => ({ ok: false, error: "Respuesta no válida" }));
         if (!out.ok) { const e = new Error(out.error || "Error al publicar"); e.pc = true; throw e; }
         data = copia;
-        published = JSON.stringify(data);
+        published = stable(data);
         ls.del("jc_admin_draft");
         renderProducts(); changed(); busy(false);
         return published_ok();
@@ -485,7 +503,7 @@
         res = await putFile(DATA_PATH, body, "Actualizar tienda desde el panel", remoteSha);
       }
       remoteSha = res.content.sha;
-      published = JSON.stringify(data);
+      published = stable(data);
       ls.del("jc_admin_draft");
       renderProducts(); changed();
       busy(false);
@@ -523,5 +541,5 @@
   let tt;
   function toast(msg){ const t = $("#toast"); t.textContent = msg; t.classList.add("show"); clearTimeout(tt); tt = setTimeout(() => t.classList.remove("show"), 2400); }
 
-  if (saved?.token) start(saved);
+  if (saved?.token && !isLocalHost) start(saved);   // en localhost se decide arriba, después de buscar el modo computador
 })();
